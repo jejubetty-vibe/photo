@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>크리스마스 카드 메이커</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf1e6;--card:#fffaf4;--ink:#3b1d1d;--mut:#8a6a62;--red:#b8272d;--grn:#1f6b4a;--line:#ead6c4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171012;--card:#261a1d;--ink:#f6e9e4;--mut:#b99d98;--line:#4a3337}}
+:root[data-theme="dark"]{--bg:#171012;--card:#261a1d;--ink:#f6e9e4;--mut:#b99d98;--line:#4a3337}
+html,body{height:auto}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-tap-highlight-color:transparent}
+h1{font-size:22px;margin:0;padding:10px 14px 0;color:var(--red)}
+.app{display:grid;gap:12px;max-width:1100px;margin:auto;padding:8px 12px 28px}
+@media(min-width:860px){.app{grid-template-columns:minmax(380px,500px) 1fr;align-items:start}.stage{position:sticky;top:8px}}
+.cvw{width:min(100%,calc(50vh*3/4));margin:auto}
+@media(min-width:860px){.cvw{width:100%}}
+#cv{width:100%;display:block;touch-action:none;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);background:#fff}
+.tools{display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.b{min-height:44px;min-width:44px;border:0;border-radius:12px;padding:0 14px;font:inherit;font-size:15px;background:var(--red);color:#fff;cursor:pointer;touch-action:manipulation}
+.b.s{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.b.g{background:var(--grn)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 8px}
+.tab{min-height:42px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:21px;padding:0 12px;font:inherit;font-size:15px;touch-action:manipulation}
+.tab.on{background:var(--grn);color:#fff;border-color:var(--grn)}
+.panel{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.it{min-height:64px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:30px;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;touch-action:manipulation}
+.it small{font-size:12px}.it img,.it canvas{width:56px;height:56px;border-radius:8px}
+.it.on{outline:3px solid var(--grn)}
+.wide{grid-column:1/-1}.tpl{font-size:15px;min-height:76px}
+label{display:block;font-size:14px;margin:10px 0 4px;color:var(--mut)}
+input[type=text],textarea,select{width:100%;font:inherit;font-size:16px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+textarea{min-height:190px;font-family:'Gaegu',sans-serif;font-size:19px;line-height:1.4}
+input[type=range]{width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips .tab{min-height:38px}
+.big{display:flex;align-items:center;gap:12px;font-size:18px;color:var(--ink);background:var(--bg);border:2px solid var(--grn);border-radius:14px;padding:14px;margin:0 0 10px;cursor:pointer}.big input{width:28px;height:28px;flex:none}.big small{display:block;font-size:13px;color:var(--mut)}
+.note{font-size:13px;color:var(--mut);line-height:1.5;margin:8px 0}
+#vid{width:100%;max-height:60vh;display:block;border-radius:10px;background:#000;transform:scaleX(-1);object-fit:cover}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#fp{width:120px;border-radius:10px;background:repeating-conic-gradient(#ccc 0 25%,#fff 0 50%) 0 0/16px 16px;display:block;margin:8px 0}
+dialog{border:0;border-radius:16px;padding:12px;max-width:min(94vw,760px);background:var(--card);color:var(--ink)}
+dialog canvas{width:100%;display:block;border-radius:8px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9;font-size:15px}
+#ban{display:none;background:var(--grn);color:#fff;padding:10px 14px;border-radius:12px}
+#pimg{display:none}
+@media print{body>*:not(#pimg){display:none!important}#pimg{display:block;width:6in;height:4in}@page{size:6in 4in;margin:0}:root{padding:0}}
+</style></head><body>
+<h1>🎄 크리스마스 카드 메이커</h1>
+<div class="app">
+<div class="stage"><div id="ban">친구가 보낸 카드예요! 내 얼굴을 넣어 답장해 보세요 🎁</div>
+<div class="tabs" id="vt"><button class="tab" data-v2="edit">✏️ 그림 편집</button><button class="tab" data-v2="let">💌 편지 쓰기</button><button class="tab" data-v2="prev">🎴 카드 미리보기</button></div>
+<div class="cvw" id="cvw"><canvas id="cv"></canvas></div>
+<div class="tools" id="tools">
+<button class="b s" data-a="z+" aria-label="확대">＋</button><button class="b s" data-a="z-" aria-label="축소">－</button>
+<button class="b s" data-a="rot" aria-label="회전">⟳</button><button class="b s" data-a="flip" aria-label="좌우반전">⇋</button>
+<button class="b s" data-a="top" aria-label="맨 앞으로">⬆</button><button class="b s" data-a="del" aria-label="삭제">🗑</button>
+<button class="b g" data-a="prev">카드 미리보기</button></div>
+<div class="note" id="hint" style="text-align:center">손가락으로 끌어 옮기고, 두 손가락으로 크기·회전을 조절해요.</div>
+<div id="pvw"><div class="note" style="text-align:center">📮 4×6 카드 미리보기 (왼쪽 그림 · 오른쪽 편지)</div><canvas id="pv" width="900" height="600" style="width:100%;display:block;border-radius:10px;border:1.5px solid var(--line);background:#fff"></canvas></div></div>
+<div><div class="tabs" id="tabs"></div><div class="panel" id="pn"></div></div>
+</div>
+<dialog id="dlg"><div id="dc"></div><div class="row"><button class="b g" data-a="save">4×6 저장</button><button class="b s" data-a="close">닫기</button></div></dialog>
+<dialog id="cdlg"><video id="vid" playsinline muted autoplay></video><div class="row"><button class="b g" data-a="snap">📸 찰칵!</button><button class="b s" data-a="camclose">취소</button></div><p class="note">얼굴이 화면 가운데에 오도록 맞춰 주세요. 밝은 곳, 단색 배경에서 찍으면 배경이 더 깨끗하게 지워져요.</p></dialog>
+<img id="pimg" alt=""><div id="toast"></div>
+<script>
+const W=900,H=1200,$=s=>document.querySelector(s);
+const cv=$('#cv'),cx=cv.getContext('2d');cv.width=W;cv.height=H;
+const sc=document.createElement('canvas');sc.width=W;sc.height=H;const sx=sc.getContext('2d');
+const CC=document.createElement('canvas');CC.width=1800;CC.height=1200;$('#dc').appendChild(CC);
+const S={frame:0,kind:0,view:'prev',noL:0,bg:0,items:[],filter:0,face:null,sel:null,tpl:0,to:'',from:'',mood:0,topic:0,seed:[0,0,0],letter:'',tab:'tpl'};
+let RAW=null;
+const sh=(c,x0,y0,r)=>{c.save();c.clip();const g=c.createRadialGradient(x0,y0,2,x0,y0,r);g.addColorStop(0,'rgba(255,255,255,.4)');g.addColorStop(.5,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.24)');c.fillStyle=g;c.fillRect(-999,-999,3000,3000);c.restore();c.lineWidth=4;c.lineJoin='round';c.strokeStyle='rgba(50,20,20,.55)';c.stroke()};
+const E=(c,x,y,rx,ry,f,n)=>{c.beginPath();c.ellipse(x,y,rx,ry,0,0,7);c.fillStyle=f;c.fill();if(!n)sh(c,x-rx*.35,y-ry*.4,Math.max(rx,ry)*1.7)};
+const PL=(c,p,f)=>{c.beginPath();p.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.closePath();c.fillStyle=f;c.fill();sh(c,200,200,260)};
+const R=(c,x,y,w,h,r,f)=>{c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=f;c.fill();sh(c,x+w*.3,y+h*.25,Math.max(w,h)*1.1)};
+const head=(c,hf,col)=>{if(hf)return;E(c,200,110,66,72,col||'#ffd9b8');E(c,178,102,7,9,'#2b1a1a',1);E(c,222,102,7,9,'#2b1a1a',1);E(c,180,99,2.5,2.5,'#fff',1);E(c,224,99,2.5,2.5,'#fff',1);E(c,160,126,12,8,'rgba(255,100,110,.45)',1);E(c,240,126,12,8,'rgba(255,100,110,.45)',1);c.strokeStyle='#8a3a3a';c.lineWidth=4;c.lineCap='round';c.beginPath();c.arc(200,120,16,.25,2.9);c.stroke()};
+const hat=(c,sz)=>{c.save();c.translate(200,70);c.scale(sz,sz);c.translate(-200,-70);c.beginPath();c.moveTo(135,72);c.quadraticCurveTo(185,-30,295,45);c.lineTo(268,72);c.closePath();c.fillStyle='#d62828';c.fill();sh(c,220,30,160);R(c,128,58,144,26,13,'#fff');E(c,296,44,16,16,'#fff');c.restore()};
+const BODIES=[
+{n:'산타',back(c,h){E(c,95,235,32,60,'#d62828');E(c,305,235,32,60,'#d62828');E(c,92,290,18,18,'#fff');E(c,308,290,18,18,'#fff');R(c,115,165,170,180,40,'#d62828');R(c,115,322,170,26,12,'#fff');R(c,115,238,170,22,0,'#222');R(c,188,234,24,30,4,'#f2c230');R(c,125,345,60,40,14,'#222');R(c,215,345,60,40,14,'#222');head(c,h);if(!h)E(c,200,152,48,36,'#fff')},front(c){hat(c,1)}},
+{n:'루돌프',back(c,h){E(c,200,275,95,70,'#9b6a43');[125,160,220,255].forEach(x=>R(c,x,310,24,78,10,'#7a4f30'));E(c,128,85,16,28,'#9b6a43');E(c,272,85,16,28,'#9b6a43');head(c,h,'#b78254')},front(c){c.strokeStyle='#6b4a2b';c.lineWidth=9;c.lineCap='round';c.beginPath();c.moveTo(150,50);c.lineTo(125,5);c.moveTo(135,25);c.lineTo(103,20);c.moveTo(250,50);c.lineTo(275,5);c.moveTo(265,25);c.lineTo(297,20);c.stroke();E(c,200,142,13,11,'#e01b24')}},
+{n:'눈사람',back(c,h){E(c,200,295,95,90,'#fff');E(c,200,200,65,58,'#fff');c.strokeStyle='#6b4a2b';c.lineWidth=7;c.lineCap='round';c.beginPath();c.moveTo(135,215);c.lineTo(58,160);c.moveTo(265,215);c.lineTo(342,160);c.stroke();head(c,h,'#fff');[250,288,325].forEach(y=>E(c,200,y,7,7,'#333'));R(c,140,172,120,22,10,'#d62828');c.strokeStyle='#bbb';c.lineWidth=3;c.beginPath();c.arc(200,295,95,0,7);c.stroke()},front(c){R(c,138,50,124,12,6,'#222');R(c,160,0,80,56,6,'#222');R(c,160,40,80,10,0,'#d62828')}},
+{n:'엘프',back(c,h){E(c,95,230,28,55,'#2f9e5a');E(c,305,230,28,55,'#2f9e5a');R(c,120,165,160,150,36,'#2f9e5a');R(c,120,250,160,18,0,'#8a4b12');R(c,140,310,50,62,10,'#d62828');R(c,210,310,50,62,10,'#fff');E(c,150,386,36,16,'#b8862b');E(c,250,386,36,16,'#b8862b');E(c,128,108,14,20,'#ffd9b8');E(c,272,108,14,20,'#ffd9b8');head(c,h)},front(c){c.beginPath();c.moveTo(135,72);c.quadraticCurveTo(190,-30,310,10);c.lineTo(266,72);c.closePath();c.fillStyle='#2f9e5a';c.fill();sh(c,220,30,160);R(c,130,60,140,20,10,'#d62828');E(c,308,12,12,12,'#f2c230')}},
+{n:'펭귄',back(c,h){E(c,200,265,100,130,'#26324a');E(c,200,290,66,98,'#fff');E(c,98,265,20,66,'#26324a');E(c,302,265,20,66,'#26324a');E(c,155,395,36,12,'#f59e0b');E(c,245,395,36,12,'#f59e0b');head(c,h,'#26324a');if(!h)E(c,200,126,16,9,'#f59e0b')},front(c){hat(c,.8)}},
+{n:'진저맨',back(c,h){const k='#b9763a';R(c,120,170,160,140,50,k);R(c,45,185,100,44,22,k);R(c,255,185,100,44,22,k);R(c,130,285,56,100,24,k);R(c,214,285,56,100,24,k);head(c,h,k);[215,245,275].forEach(y=>E(c,200,y,9,9,'#fff'))},front(c){E(c,172,180,24,15,'#d62828');E(c,228,180,24,15,'#d62828');E(c,200,180,9,9,'#a01820')}},
+{n:'산타걸',back(c,h){E(c,138,132,24,58,'#8a4b1f');E(c,262,132,24,58,'#8a4b1f');E(c,92,235,28,56,'#c9242f');E(c,308,235,28,56,'#c9242f');R(c,115,165,170,130,38,'#c9242f');PL(c,[[125,280],[275,280],[318,380],[82,380]],'#c9242f');R(c,82,368,236,20,10,'#fff');R(c,115,262,170,16,0,'#2a1a1a');head(c,h)},front(c){hat(c,1)}},
+{n:'곰돌이',back(c,h){E(c,142,58,26,26,'#a8723f');E(c,258,58,26,26,'#a8723f');E(c,200,288,92,98,'#b47b46');E(c,200,305,58,66,'#ecd0a4');E(c,108,262,26,50,'#b47b46');E(c,292,262,26,50,'#b47b46');E(c,148,388,38,20,'#a8723f');E(c,252,388,38,20,'#a8723f');head(c,h,'#b47b46');if(!h){E(c,200,130,28,20,'#ecd0a4');E(c,200,120,8,6,'#3a2a2a',1)}},front(c){R(c,135,168,130,26,13,'#d62828');hat(c,.8)}},
+{n:'토끼',back(c,h){E(c,160,12,20,60,'#fff');E(c,240,12,20,60,'#fff');E(c,160,14,9,42,'#f6b6c4',1);E(c,240,14,9,42,'#f6b6c4',1);E(c,200,288,88,98,'#fff');E(c,110,255,24,48,'#fff');E(c,290,255,24,48,'#fff');E(c,150,390,40,18,'#fff');E(c,250,390,40,18,'#fff');head(c,h,'#fff');if(!h)E(c,200,120,8,6,'#f08090',1)},front(c){R(c,135,168,130,24,12,'#2f9e5a');hat(c,.75)}},
+{n:'천사',back(c,h){E(c,100,225,50,82,'#eef4ff');E(c,300,225,50,82,'#eef4ff');PL(c,[[135,165],[265,165],[322,392],[78,392]],'#fff');R(c,132,238,136,16,8,'#f2c230');E(c,118,235,22,52,'#fff');E(c,282,235,22,52,'#fff');E(c,150,100,26,50,'#f2d27a');E(c,250,100,26,50,'#f2d27a');head(c,h)},front(c){c.beginPath();c.ellipse(200,26,56,15,0,0,7);c.strokeStyle='#f2c230';c.lineWidth=11;c.stroke()}},
+{n:'호두까기',back(c,h){E(c,98,235,26,56,'#1f4e9c');E(c,302,235,26,56,'#1f4e9c');R(c,125,165,150,170,26,'#1f4e9c');E(c,200,225,8,8,'#f2c230');E(c,200,262,8,8,'#f2c230');R(c,125,300,150,18,0,'#f2c230');R(c,140,330,56,55,10,'#fff');R(c,204,330,56,55,10,'#fff');R(c,132,372,70,24,10,'#222');R(c,198,372,70,24,10,'#222');head(c,h)},front(c){R(c,140,-55,120,125,16,'#c9242f');R(c,138,56,124,16,0,'#f2c230');E(c,200,-58,14,14,'#f2c230')}},
+{n:'고양이',back(c,h){PL(c,[[138,72],[150,18],[188,50]],'#f0a860');PL(c,[[262,72],[250,18],[212,50]],'#f0a860');c.strokeStyle='#f0a860';c.lineWidth=24;c.lineCap='round';c.beginPath();c.moveTo(270,325);c.quadraticCurveTo(355,325,342,232);c.stroke();E(c,200,288,85,98,'#f0a860');E(c,200,305,50,66,'#fff4e0');E(c,150,390,34,17,'#f0a860');E(c,250,390,34,17,'#f0a860');head(c,h,'#f0a860');if(!h)E(c,200,118,7,5,'#e86a7a',1)},front(c){R(c,135,168,130,24,12,'#c9242f');hat(c,.7)}},
+{n:'트리',back(c,h){R(c,175,350,50,40,6,'#7a4f30');PL(c,[[200,250],[372,382],[28,382]],'#2f8f4a');PL(c,[[200,190],[336,312],[64,312]],'#37a357');PL(c,[[200,140],[300,250],[100,250]],'#43b865');E(c,140,340,9,9,'#d62828');E(c,262,352,9,9,'#f2c230');E(c,205,295,9,9,'#d62828');E(c,110,368,9,9,'#f2c230');E(c,290,300,9,9,'#4aa3ff');E(c,170,248,9,9,'#f2c230');head(c,h)},front(c){c.font='80px "Apple Color Emoji","Noto Color Emoji",sans-serif';c.textAlign='center';c.fillText('⭐',200,45)}},
+{n:'선물상자',back(c,h){R(c,100,190,200,190,18,'#d62828');R(c,185,190,30,190,0,'#f2c230');R(c,100,265,200,28,0,'#f2c230');R(c,90,165,220,40,12,'#b81d24');head(c,h)},front(c){E(c,235,168,34,22,'#f2c230');E(c,285,168,34,22,'#f2c230');E(c,260,172,12,12,'#d9a010')}}];
+const BGS=[{n:'눈 오는 밤',c:['#0b1d3a','#3b5f94'],d:'snow'},{n:'숲속 아침',c:['#1f5a3f','#a8d5ba'],d:'trees'},{n:'포근한 크림',c:['#fff1e0','#f7c9a9'],d:'dots'},{n:'산타 레드',c:['#9d1b24','#e8505b'],d:'snow'},{n:'오로라',c:['#0d2b3e','#2fb58a'],d:'stars'},{n:'민트 겨울',c:['#d7f2f0','#8fcfd6'],d:'snow'},{n:'골드 파티',c:['#2b1b0e','#b8862b'],d:'stars'},{n:'핑크 캔디',c:['#ffd6e5','#ff9cc2'],d:'dots'},{n:'레드 체크',c:['#b3202a','#7d1219'],d:'check'},{n:'노을 눈밭',c:['#3d2a5c','#f19a6b'],d:'snow'},{n:'하늘 구름',c:['#7ec3f0','#e8f6ff'],d:'snow'},{n:'초록 줄무늬',c:['#1d6b48','#13503a'],d:'stripes'},{n:'보라 밤하늘',c:['#1a1038','#6a3fa0'],d:'stars'},{n:'따뜻한 벽난로',c:['#3a1a0e','#d9731f'],d:'dots'}];
+function drawBg(c,b,w,h){const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,b.c[0]);g.addColorStop(1,b.c[1]);c.fillStyle=g;c.fillRect(0,0,w,h);let s=7;const r=()=>(s=s*16807%2147483647)/2147483647,d=b.d;
+if(d=='trees'){c.fillStyle='rgba(10,60,35,.55)';for(let i=0;i<9;i++){const x=i*140-20,y=h-120;c.beginPath();c.moveTo(x,y);c.lineTo(x+70,y-340+r()*90);c.lineTo(x+140,y);c.fill()}}
+if(d=='snow'||d=='trees'){c.fillStyle='rgba(255,255,255,.85)';for(let i=0;i<70;i++){c.beginPath();c.arc(r()*w,r()*h,2+r()*6,0,7);c.fill()}E(c,w/2,h+50,w*.7,150,'#fff',1)}
+if(d=='stars'){c.fillStyle='rgba(255,250,210,.9)';for(let i=0;i<50;i++){c.beginPath();c.arc(r()*w,r()*h,1+r()*4,0,7);c.fill()}}
+if(d=='dots'){c.fillStyle='rgba(255,255,255,.3)';for(let i=0;i<26;i++){c.beginPath();c.arc(r()*w,r()*h,10+r()*40,0,7);c.fill()}}
+if(d=='check'){c.fillStyle='rgba(255,255,255,.1)';for(let i=0;i<12;i++)for(let j=0;j<12;j++)if((i+j)%2)c.fillRect(i*100,j*100,100,100)}
+if(d=='stripes'){c.strokeStyle='rgba(255,255,255,.1)';c.lineWidth=40;for(let i=-12;i<30;i++){c.beginPath();c.moveTo(i*90,0);c.lineTo(i*90+h,h);c.stroke()}}}
+const EM='🎄 ⭐ 🎁 🔔 ❄️ ⛄ 🦌 🍪 🧦 🕯️ 🎅 🤶 ❤️ ✨ 🎶 🍬 🧁 🥛 🏠 🌟 🎀 🦉 🐧 ☃️ 🧣 🛷 🔥 ☕ 🍷 🎉 🎈 💝 🌲 🍊 🍎 🧤 🕊️ 🐻 🐰 🦊 🍰 🎂 🥂 🍫 🪅 📮 💌 🧑‍🎄 👼 🌙 ☁️ 🌈 🐑 🍭 🥕 🪵 🎻 🎺 🛎️ 🐾 💫'.split(' ');
+const TXT=['Merry Christmas','메리 크리스마스','Happy Holidays','사랑해 ♥','Ho Ho Ho!','Season’s Greetings'];
+const FIL=[['없음','none'],['따뜻','sepia(.35) saturate(1.3)'],['빈티지','sepia(.6) contrast(.9)'],['흑백','grayscale(1)'],['선명','contrast(1.2) saturate(1.4)'],['몽환','brightness(1.1) saturate(1.2) blur(1.5px)'],['차갑게','hue-rotate(-20deg) saturate(1.1) brightness(1.05)'],['레트로','sepia(.4) hue-rotate(-15deg) saturate(1.6) contrast(1.1)']];
+const TP=[{n:'산타의 선물',bg:0,body:0,paper:'#fff6e8',ink:'#4a2020',st:[['🎁',190,1010,1],['🎄',920,900,1.4],['❄️',160,160,1],['⭐',900,130,1.2],['🔔',960,340,.8]]},
+{n:'루돌프 숲',bg:1,body:1,paper:'#eef8ee',ink:'#1d4a35',st:[['🌲',130,880,1.6],['🌲',970,900,1.4],['❄️',900,170,1],['✨',180,260,1]]},
+{n:'눈사람 마을',bg:5,body:2,paper:'#f1fbfb',ink:'#1e4a5a',st:[['🏠',180,900,1.4],['❄️',900,200,1.2],['❄️',250,200,.9],['⛄',960,960,.8]]},
+{n:'엘프 공방',bg:11,body:3,paper:'#f6f9ec',ink:'#264d2b',st:[['🎁',200,990,1.2],['🎁',900,1000,1],['🔔',170,200,1],['⭐',920,160,1.2]]},
+{n:'펭귄 파티',bg:10,body:4,paper:'#eef6ff',ink:'#1f3a5f',st:[['🎉',200,200,1.2],['🎈',920,220,1.2],['🧁',200,1010,1],['❄️',930,990,1]]},
+{n:'쿠키 하우스',bg:2,body:5,paper:'#fff3e6',ink:'#6b3a1a',st:[['🍪',180,960,1.2],['🥛',930,970,1.2],['🍬',930,200,1],['🎀',190,200,1]]},
+{n:'골드 파티 (그림만)',bg:6,body:-1,paper:'#2b1b0e',ink:'#f6e3b0',st:[['🎄',550,580,4],['⭐',550,150,1.6],['🎁',250,990,1.4],['🎁',850,990,1.4],['✨',200,300,1.3],['✨',900,380,1.3]]},
+{n:'산타걸 파티',bg:3,body:6,paper:'#fff0f0',ink:'#7a1c24',st:[['🎁',200,1000,1.2],['❄️',900,180,1.2],['🔔',200,200,1],['🍷',900,1000,1]]},
+{n:'고돌이 선물',bg:13,body:7,paper:'#fff2e2',ink:'#5a3318',st:[['🎁',190,1000,1.3],['🕯️',900,980,1],['⭐',900,180,1.2],['🧦',190,230,1]]},
+{n:'토끼의 겸울',bg:5,body:8,paper:'#f2fbfb',ink:'#2a5560',st:[['🥕',190,990,1.2],['❄️',900,200,1.3],['⛄',900,980,1],['✨',190,240,1]]},
+{n:'천사의 밤',bg:12,body:9,paper:'#f3efff',ink:'#3a2a6a',st:[['⭐',190,180,1.3],['🌙',900,200,1.3],['✨',900,900,1.2],['🕊️',190,980,1.1]]},
+{n:'호두까기 병정',bg:8,body:10,paper:'#fff3e6',ink:'#7d1219',st:[['🎄',190,980,1.5],['🎁',900,1000,1.1],['🔔',190,220,1],['⭐',900,200,1.2]]},
+{n:'고양이 크리스마스',bg:7,body:11,paper:'#fff0f6',ink:'#7a2a4a',st:[['🐟',900,1000,1],['🎀',190,220,1],['❄️',900,200,1.2],['🧶',190,990,1]]},
+{n:'크리스마스 트리',bg:0,body:12,paper:'#eef8ee',ink:'#1d4a35',st:[['🎁',190,1000,1.2],['🎁',900,1000,1.2],['❄️',900,180,1.2]]},
+{n:'선물상자',bg:9,body:13,paper:'#fff5e6',ink:'#4a2a1a',st:[['🎉',190,200,1.3],['🎈',900,220,1.3],['✨',190,900,1.2]]}];
+const MOODS=['따뜻한','유쾌한','감동적인','정중한'],TOPICS=['감사','사랑','안부','응원','새해 인사'];
+const OP=[['{to}에게,\n크리스마스가 가까워 오니 마음이 포근해져요.','{to}에게,\n크리스마스가 다가오니 문득 생각났어요.'],['{to}, 메리 크리스마스! 🎅\n산타보다 먼저 카드가 도착했죠?','{to}에게,\n루돌프가 길을 잃어서 내가 대신 왔어요!'],['{to}에게,\n한 해의 끝자락에서 마음을 담아 적어요.','{to}에게,\n조용한 겨울밤, 당신을 떠올리며 펜을 들었어요.'],['{tn}께,\n즐거운 성탄절을 맞이하시길 기원합니다.','{tn}께,\n한 해 동안의 감사를 담아 성탄 인사를 올립니다.']];
+const BD=[['올 한 해 곁에서 힘이 되어 줘서 정말 고마워요. 덕분에 많이 웃고 많이 배웠어요.','말로 다 전하지 못한 고마움을 이 카드에 담았어요. 늘 곁에 있어 줘서 고마워요.','올 한 해 베풀어 주신 도움과 배려에 진심으로 감사드립니다.'],
+['당신이 있어서 겨울도 하나도 춥지 않아요. 내 마음은 언제나 당신 편이에요.','반짝이는 트리보다 더 빛나는 건 바로 당신이에요. 사랑해요.','변함없는 마음으로 아끼고 있음을 전합니다. 늘 소중한 존재입니다.'],
+['요즘 잘 지내고 있나요? 바쁜 일상 속에서도 따뜻한 겨울 보내고 있기를 바라요.','연말이라 더 보고 싶어요. 얼굴 한번 보며 따뜻한 차 한잔 해요.','그간 평안하셨는지요. 쌀쌀한 날씨에 건강 유의하시기를 바랍니다.'],
+['올해도 정말 수고 많았어요. 지금처럼만 하면 충분해요. 내가 늘 응원할게요!','힘든 날도 있었겠지만 잘 해내고 있어요. 내년엔 더 좋은 일만 가득할 거예요.','올 한 해 애쓰신 노고에 격려를 보냅니다. 내년에도 건승하시길 응원합니다.'],
+['다가오는 새해에는 웃을 일이 더 많아지길 바라요. 건강하고 행복한 한 해 되세요!','한 해 잘 마무리하고, 새해엔 소원이 모두 이루어지길 바라요!','새해에도 건강과 행복이 가득하시기를 기원합니다.']];
+const CL=[['따뜻한 성탄절 보내요 🎄','포근한 겨울 보내요 ☃️'],['오늘은 신나게 웃는 하루 되기! 🎉','선물 기대해도 좋아요 🎁'],['당신의 겨울이 따뜻하길 바라요.','소중한 마음 오래 기억할게요.'],['즐겁고 평안한 성탄절 되시기 바랍니다.','늘 건강하시고 행복하시길 기원합니다.']];
+const KINDS=['일반 편지','🎅 산타에게','👨‍👩‍👧 부모님께'],TK=[['감사','사랑','안부','응원','새해 인사'],['선물 부탁','착하게 지냈어요','감사','소원 빌기','응원'],['감사','사랑','안부','죄송한 마음','건강 당부']];
+const KO=[[['{n}께,\n안녕하세요, 크리스마스가 다가왔어요.','{n}께,\n올해도 잘 지내셨죠? 편지를 써요.'],['{n}께! 🎅\n저 기억하시죠? 올해도 편지 보내요!','{n}께,\n루돌프도 잘 지내죠? 안부부터 물어요!'],['{n}께,\n한 해를 돌아보며 마음을 담아 편지를 써요.','{n}께,\n조용한 겨울밤, 두 손 모아 편지를 써요.'],['{n}께,\n성탄을 맞아 삼가 편지를 올립니다.','{n}께,\n평안하신지요. 성탄 인사와 함께 편지를 드립니다.']],[['{n}께,\n크리스마스가 다가오니 문득 {n} 생각이 났어요.','{n}께,\n오늘은 평소에 못 한 말을 적어 봐요.'],['{n}께! 메리 크리스마스! 🎄\n선물보다 편지가 먼저 도착했죠?','{n}께,\n산타 대신 제가 왔어요, 짜잔!'],['{n}께,\n펜을 들고 보니 마음이 먼저 뭉클해져요.','{n}께,\n한 해의 끝에서 오래 하지 못한 말을 적어요.'],['{n}께,\n성탄을 맞아 평소 전하지 못한 마음을 올립니다.','{n}께,\n그간 안녕하신지요. 성탄 인사 드립니다.']]];
+const KB=[[['올해 가장 받고 싶은 선물이 있어요. 마음속으로 오래 생각한 건데, 꼭 들어주세요!','선물은 작아도 괜찮아요. 제 소원을 한 번만 떠올려 주세요!','올해 갖고 싶은 선물을 조심스럽게 부탁드립니다. 살펴 주시면 감사하겠습니다.'],['올해는 인사도 잘하고 약속도 잘 지키려고 노력했어요. 칭찬해 주세요!','가끔 투정도 부렸지만 반성하고 있어요. 내년엔 더 착하게 지낼게요.','올 한 해 바르게 지내려 노력했음을 말씀드립니다.'],['해마다 잊지 않고 와 주셔서 고마워요. 덕분에 크리스마스가 기다려져요.','밤새 먼 길 오시는 거 알아요. 늘 고마워요!','해마다 베풀어 주시는 기쁨에 감사드립니다.'],['저는 선물보다 우리 가족이 건강하고 행복했으면 좋겠어요. 그게 제 소원이에요.','친구들 모두가 웃는 크리스마스가 되게 해 주세요.','가족과 이웃 모두의 평안을 소원합니다.'],['추운 날 썰매 타고 다니느라 힘드시죠? 항상 응원해요!','루돌프랑 같이 힘내세요. 저도 응원할게요!','먼 길 안전하게 다니시기를 응원합니다.']],[['키워 주셔서 정말 고마워요. 당연한 줄 알았던 모든 게 사랑이었다는 걸 이제 알아요.','늘 곁에서 지켜 줘서 고마워요. 두 분 덕분에 제가 이만큼 자랐어요.','길러 주신 은혜와 변함없는 사랑에 깊이 감사드립니다.'],['사랑한다는 말, 쑥스러워서 자주 못 했지만 늘 마음속에 있어요. 사랑해요.','세상에서 제일 따뜻한 집은 두 분이 계신 곳이에요. 사랑해요.','표현이 서툴렀으나 깊이 존경하고 사랑하고 있습니다.'],['요즘 어떻게 지내세요? 밥은 잘 챙겨 드시고 계시죠? 보고 싶어요.','추운데 감기 걸리지 않게 따뜻하게 입으세요. 곧 찾아뵐게요.','환절기 건강은 어떠신지요. 곧 찾아뵙겠습니다.'],['가끔 짜증 내고 속상하게 해서 미안해요. 마음은 그게 아니었어요.','바쁘다는 핑계로 연락을 자주 못 드려 죄송해요. 앞으로 더 자주 연락할게요.','자주 찾아뵙지 못해 송구한 마음입니다. 더 살피겠습니다.'],['무리하지 말고 건강부터 챙겨 주세요. 두 분이 건강한 게 제일 큰 선물이에요.','병원도 미루지 말고 꼭 다녀오세요. 제가 걱정돼요.','무엇보다 건강을 먼저 살피시기를 당부드립니다.']]];
+const KC=[['올해도 선물 주실 거죠? 기다리고 있을게요 🎁','현관문을 열어 둘게요 🚪'],['선물 주시는 거죠? 두근두근 기다릴게요! 🎁','루돌프에게도 안부 전해 주세요 🦌'],['당신을 믿고 기다릴게요.','올겨울도 건강하세요.'],['건강하고 안전한 여정 되시길 바랍니다.','늘 평안하시길 기원합니다.']];
+function gen(){const m=S.mood,t=S.topic,to=S.to.trim(),f=(a,i)=>a[i%a.length];
+if(S.kind){const k=S.kind-1,n=to||['산타 할아버지','엄마 아빠'][k],o=f(KO[k][m],S.seed[0]).replace(/\{n\}/g,n),b=f(KB[k][t].slice(m==3?2:0,m==3?3:2),S.seed[1]);S.letter=o+'\n\n'+b+'\n\n'+f(k?CL[m]:KC[m],S.seed[2]);return}
+const o=f(OP[m],S.seed[0]).replace('{to}',to||'소중한 사람').replace('{tn}',to?(/(님|선생님|할머니|할아버지|엄마|아빠)$/.test(to)?to:to+'님'):'소중한 분');
+const b=f(BD[t].slice(m==3?2:0,m==3?3:2),S.seed[1]);S.letter=o+'\n\n'+b+'\n\n'+f(CL[m],S.seed[2])}
+// ---- scene
+const SZ={b:[400,400],f:[250,300],s:[120,120]};
+const tw=i=>{cx.font='80px Jua,sans-serif';return cx.measureText(i.txt).width+30};
+const size=i=>i.t=='x'?[tw(i),110]:i.t=='i'?[300,300*i.c.height/i.c.width]:SZ[i.t];
+function tx(c,i,fn){c.save();c.translate(i.x,i.y);c.rotate(i.r);c.scale(i.f?-i.s:i.s,i.s);fn();c.restore()}
+function render(c){drawBg(c,BGS[S.bg],W,H);const hf=!!S.face&&S.items.some(i=>i.t=='f'),bs=S.items.filter(i=>i.t=='b');
+bs.forEach(i=>tx(c,i,()=>E(c,0,192,110,16,'rgba(0,0,0,.2)',1)));
+bs.forEach(i=>tx(c,i,()=>{c.translate(-200,-200);BODIES[i.k].back(c,hf)}));
+S.items.filter(i=>i.t=='f').forEach(i=>tx(c,i,()=>{c.scale(.5556,.5556);drawFrame(c,S.frame)}));
+bs.forEach(i=>tx(c,i,()=>{c.translate(-200,-200);BODIES[i.k].front(c)}));
+S.items.filter(i=>i.t=='s'||i.t=='x'||i.t=='i').forEach(i=>tx(c,i,()=>{c.textAlign='center';c.textBaseline='middle';if(i.t=='i'){const h=300*i.c.height/i.c.width;c.drawImage(i.c,-150,-h/2,300,h)}else if(i.t=='s'){c.font='100px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';c.fillText(i.e,0,0)}else{c.font='80px Jua,sans-serif';c.lineJoin='round';c.lineWidth=14;c.strokeStyle='#fff';c.strokeText(i.txt,0,0);c.fillStyle='#c8302f';c.fillText(i.txt,0,0)}}))}
+const CF='filter' in cx;
+function paint(){pvUpd();render(sx);cx.clearRect(0,0,W,H);const f=FIL[S.filter][1];if(CF){cx.filter=f;cx.drawImage(sc,0,0);cx.filter='none'}else{cx.drawImage(sc,0,0);cv.style.filter=f}
+const i=S.sel;if(i&&S.items.includes(i)){const[w,h]=size(i);cx.save();cx.translate(i.x,i.y);cx.rotate(i.r);cx.scale(i.s,i.s);cx.setLineDash([12,8]);cx.lineWidth=4/i.s;cx.strokeStyle='#fff';cx.strokeRect(-w/2,-h/2,w,h);cx.strokeStyle='#1f6b4a';cx.lineDashOffset=10;cx.strokeRect(-w/2,-h/2,w,h);cx.restore()}}
+// ---- card 4x6
+function wrap(c,t,mw){const L=[];t.split('\n').forEach(p=>{if(!p){L.push('');return}let l='';p.split(' ').forEach(w=>{const n=l?l+' '+w:w;if(c.measureText(n).width>mw&&l){L.push(l);l=w}else l=n});L.push(l)});return L}
+function card(){const c=CC.getContext('2d'),T=TP[S.tpl]||TP[0];render(sx);c.fillStyle='#fff';c.fillRect(0,0,1800,1200);c.filter=CF?FIL[S.filter][1]:'none';c.drawImage(sc,0,0,900,1200);c.filter='none';
+c.fillStyle=T.paper;c.fillRect(900,0,900,1200);c.strokeStyle=T.ink;c.globalAlpha=.35;c.lineWidth=3;c.setLineDash([14,10]);c.strokeRect(930,30,840,1140);c.setLineDash([]);c.globalAlpha=1;
+c.fillStyle=T.ink;c.textAlign='center';c.font='68px Jua,sans-serif';c.fillText('Merry Christmas',1350,125);c.font='44px sans-serif';c.fillText('🎄 ✨ 🎁',1350,190);
+c.textAlign='left';c.textBaseline='alphabetic';if(S.noL){c.textAlign='center';c.fillStyle=T.ink;c.font='96px Jua,sans-serif';c.fillText('메리 크리스마스!',1350,620);c.font='100px sans-serif';c.fillText('🎄🎁✨',1350,800);c.textAlign='right';c.font='46px Jua,sans-serif';c.fillText('From. '+(S.from.trim()||'산타'),1740,1120);return}
+let fs=58,L;const mw=700;
+for(;fs>=24;fs-=2){c.font='700 '+fs+'px Gaegu,Jua,sans-serif';L=wrap(c,S.letter,mw);if(L.length*fs*1.35<760)break}
+c.fillStyle=T.ink;L.forEach((l,i)=>c.fillText(l,970,260+fs+i*fs*1.35));
+c.textAlign='right';c.font='46px Jua,sans-serif';c.fillText('From. '+(S.from.trim()||'산타'),1740,1120)}
+const cardBlob=()=>{card();return new Promise(r=>CC.toBlob(r,'image/png'))};
+// ---- items & templates
+function mk(t,o){return Object.assign({t,x:450,y:600,s:1,r:0,f:0},o)}
+function placeFace(){if(!S.items.some(i=>i.t=='f')){const n=mk('f',{x:450,y:560,s:2.3});S.items.push(n);S.sel=n}}
+function applyTpl(k){const T=TP[k];S.tpl=k;S.bg=T.bg;S.filter=0;S.sel=null}
+function setBody(k){const o=S.items.find(i=>i.t=='b');const n=mk('b',{k,x:o?o.x:450,y:o?o.y:760,s:o?o.s:1.6,r:o?o.r:0});S.items=S.items.filter(i=>i.t!='b');S.items.unshift(n);if(S.items.some(i=>i.t=='f'))placeFace();S.sel=n}
+// ---- touch
+const P=new Map();let G=null;
+const pt=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}};
+function hit(p){const o=[...S.items.filter(i=>i.t=='s'||i.t=='x'||i.t=='i').reverse(),...S.items.filter(i=>i.t=='f'),...S.items.filter(i=>i.t=='b')];
+return o.find(i=>{const dx=p.x-i.x,dy=p.y-i.y,cs=Math.cos(-i.r),sn=Math.sin(-i.r),lx=(dx*cs-dy*sn)/i.s,ly=(dx*sn+dy*cs)/i.s,[w,h]=size(i);return Math.abs(lx)<=w/2&&Math.abs(ly)<=h/2})||null}
+const D=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),A=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);const p=pt(e);P.set(e.pointerId,p);
+if(P.size==1){const h=hit(p);S.sel=h;G=h?{ox:h.x-p.x,oy:h.y-p.y}:null}
+else if(P.size==2&&S.sel){const[a,b]=[...P.values()];G={d:D(a,b),an:A(a,b),s:S.sel.s,r:S.sel.r}}paint()});
+cv.addEventListener('pointermove',e=>{if(!P.has(e.pointerId))return;const p=pt(e);P.set(e.pointerId,p);const i=S.sel;if(!i||!G)return;
+if(P.size==1&&G.ox!=null){i.x=p.x+G.ox;i.y=p.y+G.oy}else if(P.size==2&&G.d){const[a,b]=[...P.values()];i.s=Math.max(.2,Math.min(8,G.s*D(a,b)/G.d));i.r=G.r+A(a,b)-G.an}paint()});
+const up=e=>{P.delete(e.pointerId);if(P.size==1&&S.sel){const p=[...P.values()][0];G={ox:S.sel.x-p.x,oy:S.sel.y-p.y}}else if(!P.size)G=null;paint()};
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+function act(a){const i=S.sel;
+if(a=='prev'){card();$('#dlg').showModal();return}if(a=='close'){$('#dlg').close();return}
+if(a=='save'){save();return}
+if(!i)return toast('먼저 꾸밀 그림을 눌러 선택해 주세요');
+if(a=='z+')i.s*=1.12;if(a=='z-')i.s/=1.12;if(a=='rot')i.r+=Math.PI/12;if(a=='flip')i.f=i.f?0:1;
+if(a=='top'){S.items=S.items.filter(x=>x!=i);S.items.push(i)}
+if(a=='del'){S.items=S.items.filter(x=>x!=i);S.sel=null}paint()}
+// ---- photo
+function removeBg(c,tol){const w=c.canvas.width,h=c.canvas.height,d=c.getImageData(0,0,w,h),p=d.data;let r=0,g=0,b=0,n=0;
+const add=(x,y)=>{const k=(y*w+x)*4;r+=p[k];g+=p[k+1];b+=p[k+2];n++};
+for(let x=0;x<w;x+=3){add(x,0);add(x,h-1)}for(let y=0;y<h;y+=3){add(0,y);add(w-1,y)}r/=n;g/=n;b/=n;
+const seen=new Uint8Array(w*h),st=[],t2=tol*tol*3,ok=q=>{const k=q*4;return(p[k]-r)**2+(p[k+1]-g)**2+(p[k+2]-b)**2<t2};
+const push=q=>{if(!seen[q]&&ok(q)){seen[q]=1;st.push(q)}};
+for(let x=0;x<w;x++){push(x);push((h-1)*w+x)}for(let y=0;y<h;y++){push(y*w);push(y*w+w-1)}
+while(st.length){const q=st.pop(),x=q%w,y=(q/w)|0;if(x>0)push(q-1);if(x<w-1)push(q+1);if(y>0)push(q-w);if(y<h-1)push(q+w)}
+for(let q=0;q<w*h;q++){if(seen[q])p[q*4+3]=0;else{const x=q%w,y=(q/w)|0;if((x>0&&seen[q-1])||(x<w-1&&seen[q+1])||(y>0&&seen[q-w])||(y<h-1&&seen[q+w]))p[q*4+3]=130}}c.putImageData(d,0,0)}
+function buildFace(){const o=$('#fp');if(!RAW||!o)return;const c=o.getContext('2d');o.width=360;o.height=440;c.clearRect(0,0,360,440);
+const z=+$('#zm').value,y=+$('#yp').value,sw=Math.min(RAW.width,RAW.height*360/440)/z,sh=sw*440/360;
+const sx0=(RAW.width-sw)/2,sy0=Math.max(0,Math.min(RAW.height-sh,(RAW.height-sh)/2+y*RAW.height));
+c.drawImage(RAW,sx0,sy0,sw,sh,0,0,360,440);
+if($('#rb').checked)removeBg(c,+$('#sn').value);
+if($('#ov').checked){c.globalCompositeOperation='destination-in';c.beginPath();c.ellipse(180,220,165,205,0,0,7);c.fill();c.globalCompositeOperation='source-over'}}
+function loadPhoto(f){if(!f)return;const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const m=Math.min(1,720/Math.max(im.width,im.height));RAW=document.createElement('canvas');RAW.width=im.width*m;RAW.height=im.height*m;RAW.getContext('2d').drawImage(im,0,0,RAW.width,RAW.height);URL.revokeObjectURL(u);buildFace()};im.onerror=()=>toast('사진을 열 수 없어요. 다른 사진을 골라 주세요');im.src=u}
+let stream=null;
+async function openCam(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$('#ph2').click();return}
+try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:1280}},audio:false});const v=$('#vid');v.srcObject=stream;$('#cdlg').showModal();await v.play().catch(()=>{})}
+catch(e){stream=null;toast('카메라 권한이 없어 기본 카메라 앱으로 전환해요');$('#ph2').click()}}
+function closeCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const d=$('#cdlg');if(d.open)d.close()}
+function snap(){const v=$('#vid');if(!v.videoWidth)return toast('카메라가 준비되는 중이에요. 잠시만요');const m=Math.min(1,720/Math.max(v.videoWidth,v.videoHeight));RAW=document.createElement('canvas');RAW.width=v.videoWidth*m;RAW.height=v.videoHeight*m;const c=RAW.getContext('2d');c.translate(RAW.width,0);c.scale(-1,1);c.drawImage(v,0,0,RAW.width,RAW.height);closeCam();buildFace()}
+$('#cdlg').addEventListener('close',closeCam);
+const RC=['엄마','아빠','할머니','할아버지','친구','연인','선생님','동료','가족 모두'],SD=['엄마','아빠','아들','딸','친구','연인','산타','우리 가족'];
+function setView(v){S.view=v;const e=v=='edit',l=v=='let',w=S.tab;$('#cvw').style.display=e?'':'none';$('#tools').style.display=e?'':'none';$('#hint').style.display=e?'':'none';$('#pvw').style.display=v=='prev'?'':'none';$('#tabs').style.display=l?'none':'';if(l)S.tab='let';else if(S.tab=='let')S.tab='tpl';if(S.tab!=w)panel();document.querySelectorAll('#vt .tab').forEach(b=>b.classList.toggle('on',b.dataset.v2==v));if(e)paint();else pvUpd()}
+function addImg(f){if(!f)return;const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const m=Math.min(1,600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*m);c.height=Math.round(im.height*m);const t=c.getContext('2d');t.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);if($('#ib')&&$('#ib').checked)removeBg(t,60);const n=mk('i',{c,x:450,y:600,s:1.8});S.items.push(n);S.sel=n;setView('edit');paint()};im.onerror=()=>toast('이미지를 열 수 없어요');im.src=u}
+TP.length=0;[['포근한 눈밤',0,'#fff6e8','#4a2020'],['숲속 아침',1,'#eef8ee','#1d4a35'],['민트 겨울',5,'#f1fbfb','#1e4a5a'],['레드 크리스마스',3,'#fff0f0','#7a1c24'],['오로라',4,'#eaf6f2','#14423a'],['골드 파티',6,'#2b1b0e','#f6e3b0'],['핑크 캔디',7,'#fff0f6','#7a2a4a'],['레드 체크',8,'#fff3e6','#7d1219'],['노을 눈밭',9,'#fff1e8','#4b2f5c'],['하늘 구름',10,'#eef6ff','#1f3a5f'],['초록 줄무늬',11,'#f6f9ec','#264d2b'],['보라 밤하늘',12,'#f3efff','#3a2a6a'],['벅난로',13,'#fff2e2','#5a3318'],['포근한 크림',2,'#fff3e6','#6b3a1a']].forEach(a=>TP.push({n:a[0],bg:a[1],paper:a[2],ink:a[3],st:[],body:-1}));
+const FRM=[{n:'골드',k:'r',b:36,f:'g'},{n:'우드',k:'r',b:40,f:'w'},{n:'폴라로이드',k:'r',b:26,f:'#fff',d:'p'},{n:'크리스마스 리스',k:'o',b:44,f:'#2f7a4a',d:'l'},{n:'캣디케인',k:'r',b:34,f:'c'},{n:'눈꽃 원형',k:'c',b:30,f:'#fff',d:'s'},{n:'오너먼트',k:'c',b:22,f:'#d62828',d:'n'},{n:'하트',k:'h',b:26,f:'#d62828'},{n:'레드 리본',k:'r',b:28,f:'#b8272d',d:'b'},{n:'은빛 타원',k:'o',b:30,f:'s'}];
+const PH=document.createElement('canvas');PH.width=360;PH.height=440;(c=>{const g=c.createLinearGradient(0,0,0,440);g.addColorStop(0,'#cfe8ff');g.addColorStop(1,'#f6f9ff');c.fillStyle=g;c.fillRect(0,0,360,440);c.fillStyle='#9db8d6';c.beginPath();c.arc(180,170,70,0,7);c.fill();c.beginPath();c.ellipse(180,400,130,110,0,0,7);c.fill()})(PH.getContext('2d'));
+function fpath(c,k,p){c.beginPath();const w=180+p,h=220+p;if(k=='r')c.roundRect(-w,-h,2*w,2*h,14+p);else if(k=='o')c.ellipse(0,0,w,h,0,0,7);else if(k=='c')c.arc(0,0,190+p,0,7);else{const s=200+p;c.moveTo(0,.9*s);c.bezierCurveTo(-1.4*s,-.1*s,-.9*s,-1*s,0,-.4*s);c.bezierCurveTo(.9*s,-1*s,1.4*s,-.1*s,0,.9*s)}}
+function fillOf(c,f){if(f=='g'||f=='w'||f=='s'){const g=c.createLinearGradient(-200,-240,200,240);(f=='g'?['#f7e08a','#c9962e','#fff1b5','#a8741a']:f=='w'?['#b98147','#6e4420','#a9733a','#5a3718']:['#f4f6fa','#9aa3b2','#e8ecf3','#8b94a4']).forEach((s,i,a)=>g.addColorStop(i/(a.length-1),s));return g}if(f=='c'){const t=document.createElement('canvas');t.width=t.height=48;const x=t.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,48,48);x.fillStyle='#d62828';x.beginPath();x.moveTo(0,24);x.lineTo(24,0);x.lineTo(48,0);x.lineTo(0,48);x.fill();x.beginPath();x.moveTo(48,24);x.lineTo(48,48);x.lineTo(24,48);x.fill();return c.createPattern(t,'repeat')}return f}
+function drawFrame(c,fi,ph){const F=FRM[fi]||FRM[0],img=(!ph&&S.face)||PH;c.save();c.shadowColor='rgba(0,0,0,.35)';c.shadowBlur=24;c.shadowOffsetY=10;if(F.d=='p'){c.beginPath();c.roundRect(-212,-252,424,574,10)}else fpath(c,F.k,F.b);c.fillStyle=fillOf(c,F.f);c.fill();c.restore();
+c.save();fpath(c,F.k,0);c.clip();c.drawImage(img,-180,-220,360,440);c.restore();fpath(c,F.k,0);c.lineWidth=4;c.strokeStyle='rgba(0,0,0,.4)';c.stroke();
+if(F.d!='p'){fpath(c,F.k,F.b);c.lineWidth=3;c.strokeStyle='rgba(0,0,0,.3)';c.stroke()}
+if(F.f=='g'||F.f=='w'){fpath(c,F.k,F.b*.5);c.lineWidth=3;c.strokeStyle=F.f=='g'?'#fff3b0':'#d9a86a';c.stroke()}
+const d=F.d;c.textAlign='center';
+if(d=='p'){c.fillStyle='#555';c.font='44px Gaegu,Jua,sans-serif';c.fillText('Merry Christmas',0,292)}
+if(d=='l'){for(let a=0;a<48;a++){const t=a/48*6.2832,x=202*Math.cos(t),y=242*Math.sin(t);c.save();c.translate(x,y);c.rotate(t+1.5708);c.beginPath();c.ellipse(0,0,24,11,0,0,7);c.fillStyle=a%2?'#3f9a5e':'#256b3d';c.fill();c.restore();if(a%6==0){c.beginPath();c.arc(x,y,8,0,7);c.fillStyle='#d62828';c.fill()}}c.fillStyle='#d62828';[-26,26].forEach(x=>{c.beginPath();c.ellipse(x,255,30,17,x<0?.4:-.4,0,7);c.fill()});c.beginPath();c.arc(0,252,11,0,7);c.fillStyle='#a01820';c.fill()}
+if(d=='s'){for(let a=0;a<18;a++){const t=a/18*6.2832;c.beginPath();c.arc(205*Math.cos(t),205*Math.sin(t),9,0,7);c.fillStyle=a%2?'#9fd3ff':'#e8f4ff';c.fill();c.strokeStyle='rgba(0,0,0,.25)';c.lineWidth=2;c.stroke()}}
+if(d=='n'){c.fillStyle='#f2c230';c.fillRect(-32,-236,64,34);c.strokeStyle='rgba(0,0,0,.35)';c.lineWidth=3;c.strokeRect(-32,-236,64,34);c.beginPath();c.arc(0,-258,22,0,7);c.lineWidth=8;c.strokeStyle='#f2c230';c.stroke()}
+if(d=='b'){c.fillStyle='#f2c230';[[-32,-.3],[32,.3]].forEach(p=>{c.beginPath();c.ellipse(p[0],-256,36,20,p[1],0,7);c.fill();c.strokeStyle='rgba(0,0,0,.3)';c.stroke()});c.beginPath();c.arc(0,-252,13,0,7);c.fillStyle='#d9a010';c.fill()}}
+function fth(i){return th['f'+i]||(th['f'+i]=(()=>{const c=document.createElement('canvas');c.width=80;c.height=92;const t=c.getContext('2d');t.translate(40,46);t.scale(.135,.135);drawFrame(t,i,1);return c.toDataURL()})())}
+function lpUpd(){pvUpd()}
+let pvT;function pvUpd(){clearTimeout(pvT);pvT=setTimeout(()=>{const l=$('#pv');if(!l||S.view!='prev')return;card();l.getContext('2d').drawImage(CC,0,0,900,600)},120)}
+function useFace(){if(!RAW)return toast('먼저 사진을 찍거나 골라 주세요');const f=document.createElement('canvas');f.width=360;f.height=440;f.getContext('2d').drawImage($('#fp'),0,0);S.face=f;placeFace();S.sel=S.items.find(i=>i.t=='f');paint();toast('얼굴을 넣었어요! 끌어서 위치를 맞춰 보세요')}
+// ---- share
+function enc(){const o={b:S.bg,f:S.filter,p:S.tpl,i:S.items.filter(i=>i.t!='i').map(i=>[i.t,i.t=='f'?S.frame:i.t=='b'?i.k:i.t=='s'?i.e:i.txt,Math.round(i.x),Math.round(i.y),+i.s.toFixed(2),+i.r.toFixed(2),i.f?1:0]),fr:S.from,to:S.to,m:S.mood,tp:S.topic,nl:S.noL,k:S.kind,L:S.letter};return btoa(unescape(encodeURIComponent(JSON.stringify(o))))}
+const link=()=>location.href.split('#')[0]+'#c='+enc();
+function loadHash(){const m=location.hash.match(/c=([^&]+)/);if(!m)return false;try{const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));S.bg=o.b;S.filter=o.f;S.tpl=o.p;S.items=o.i.map(a=>{const i=mk(a[0],{x:a[2],y:a[3],s:a[4],r:a[5],f:a[6]});if(a[0]=='f')S.frame=a[1];else if(a[0]=='b')i.k=a[1];else if(a[0]=='s')i.e=a[1];else i.txt=a[1];return i});S.from=o.fr;S.to=o.to;S.mood=o.m;S.topic=o.tp;S.letter=o.L;S.noL=o.nl||0;S.kind=o.k||0;return true}catch(e){return false}}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast('링크를 복사했어요!')}catch(e){const i=$('#lk');if(i){i.value=t;i.select();toast('링크를 길게 눌러 복사해 주세요')}}}
+async function shareLink(){const url=link();if(navigator.share){try{await navigator.share({title:'크리스마스 카드가 도착했어요 🎄',text:'메리 크리스마스! 🎅',url});return}catch(e){if(e.name=='AbortError')return}}copy(url)}
+async function shareImg(){const b=await cardBlob(),f=new File([b],'christmas-card.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'크리스마스 카드'})}catch(e){}}else{toast('이 브라우저는 이미지 공유를 지원하지 않아 저장할게요');save()}}
+async function save(){const b=await cardBlob(),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='christmas-card-4x6.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast('1800×1200 (4×6인치, 300dpi) 저장!')}
+async function print(){const b=await cardBlob(),im=$('#pimg');im.onload=()=>window.print();im.src=URL.createObjectURL(b)}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity=1;clearTimeout(tt);tt=setTimeout(()=>t.style.opacity=0,2400)}
+// ---- panels
+const TABS=[['tpl','🎨 템플릿'],['frame','🖼 액자'],['photo','📸 내 사진'],['bg','🖼 배경'],['st','⭐ 스티커'],['flt','✨ 필터'],['out','🎁 저장·공유']];
+const th={};function thumb(k){return th['b'+k]||(th['b'+k]=(()=>{const c=document.createElement('canvas');c.width=c.height=80;const t=c.getContext('2d');t.scale(.2,.2);BODIES[k].back(t,false);BODIES[k].front(t);return c.toDataURL()})())}
+function bgThumb(k){return th['g'+k]||(th['g'+k]=(()=>{const c=document.createElement('canvas');c.width=60;c.height=66;const t=c.getContext('2d');t.scale(60/W,66/H);drawBg(t,BGS[k],W,H);return c.toDataURL()})())}
+const chips=(a,v,n)=>'<div class="chips">'+a.map((x,i)=>`<button class="tab ${i==v?'on':''}" data-a="${n}" data-v="${i}">${x}</button>`).join('')+'</div>';
+function panel(){const p=$('#pn'),t=S.tab;let h='';
+if(t=='tpl')h='<div class="grid">'+TP.map((x,i)=>`<button class="it tpl ${i==S.tpl?'on':''}" data-a="tpl" data-v="${i}"><img src="${bgThumb(x.bg)}" alt=""><small>${x.n}</small></button>`).join('')+'</div><p class="note">템플릿을 고르면 배경과 편지지 색만 바뀔요. 액자·사진·스티커는 그대로 유지돼요.</p>';
+if(t=='photo')h=`<p class="note">🔒 사진은 이 기기의 브라우저 안에서만 처리돼요. 서버로 업로드·저장되지 않으므로 AI 학습에도 쓰이지 않아요. 창을 닫으면 사라져요.</p>
+<input type="file" id="ph" accept="image/*" hidden><input type="file" id="ph2" accept="image/*" capture="user" hidden><div class="row"><button class="b" data-a="cam">📷 사진 찍기</button><button class="b s" data-a="pick">🖼 앨범에서 고르기</button></div>
+<canvas id="fp" width="360" height="440"></canvas>
+<label><input type="checkbox" id="rb"> 배경 자동 제거 (투명)</label><label>제거 민감도</label><input type="range" id="sn" min="20" max="120" value="60">
+<label><input type="checkbox" id="ov"> 얼굴만 타원으로 자르기</label><label>확대</label><input type="range" id="zm" min="1" max="2.5" step=".05" value="1.2"><label>위아래 위치</label><input type="range" id="yp" min="-.3" max=".3" step=".01" value="0">
+<div class="row"><button class="b g" data-a="face">액자에 사진 넣기</button><button class="b s" data-a="noface">사진 없이 꾸미기</button></div>
+<p class="note">배경이 단색에 가까울수록 깔끔하게 지워져요. 남으면 민감도를 올려 보세요.</p>`;
+if(t=='frame')h='<div class="grid">'+FRM.map((f,i)=>`<button class="it ${i==S.frame?'on':''}" data-a="frm" data-v="${i}"><img src="${fth(i)}" alt=""><small>${f.n}</small></button>`).join('')+'</div><p class="note">액자를 고르면 화면에 바로 나타나요. 사진은 [📸 내 사진] 탭에서 찍거나 고르면 액자 안에 들어가요.</p>';
+if(t=='body')h='<div class="grid">'+BODIES.map((b,i)=>`<button class="it" data-a="body" data-v="${i}"><img src="${thumb(i)}" alt=""><small>${b.n}</small></button>`).join('')+'<button class="it" data-a="nobody"><span>🚫</span><small>없음</small></button></div><input type="file" id="up" accept="image/*" hidden><div class="row"><button class="b s" data-a="upl">📁 내 이미지 추가</button></div><label><input type="checkbox" id="ib"> 추가한 이미지 배경 자동 제거</label><p class="note">고화질 캐릭터·일러스트 PNG(투명 배경 추천)를 올려 카드에 쓸 수 있어요. 이미지는 서버로 전송되지 않고, 공유 링크에는 포함되지 않아요.</p>';
+if(t=='bg')h='<div class="grid">'+BGS.map((b,i)=>`<button class="it ${i==S.bg?'on':''}" data-a="bg" data-v="${i}"><img src="${bgThumb(i)}" alt=""><small>${b.n}</small></button>`).join('')+'</div>';
+if(t=='st')h='<div class="grid">'+EM.map((e,i)=>`<button class="it" data-a="st" data-v="${i}">${e}</button>`).join('')+'</div><label>글자 스티커</label><div class="chips">'+TXT.map((x,i)=>`<button class="tab" data-a="tx" data-v="${i}">${x}</button>`).join('')+'</div><input type="file" id="up" accept="image/*" hidden><div class="row"><button class="b s" data-a="upl">📁 내 이미지 추가</button></div><label><input type="checkbox" id="ib"> 추가한 이미지 배경 자동 제거</label><p class="note">일러스트 PNG(투명 배경 추천)를 올려 스티커처럼 쓸 수 있어요. 서버로 전송되지 않고, 공유 링크에는 포함되지 않아요.</p>';
+if(t=='flt')h='<div class="chips">'+FIL.map((f,i)=>`<button class="tab ${i==S.filter?'on':''}" data-a="flt" data-v="${i}">${f[0]}</button>`).join('')+'</div>'+(CF?'':'<p class="note">이 브라우저는 저장 이미지에 필터가 적용되지 않을 수 있어요.</p>');
+if(t=='let')h=`<label class="big"><input type="checkbox" id="nol" ${S.noL?'checked':''}><span>✉️ 편지 없이 카드만 만들기<small>체크하면 카드 오른쪽에 인사말만 들어가요</small></span></label><label>보내는 사람</label><input type="text" id="fr" value="${S.from}" placeholder="예: 지은" maxlength="20"><div style="margin-top:6px;${S.noL?'opacity:.4;pointer-events:none':''}"><label>누구에게 쓸까요?</label><div class="chips">${[1,2,0].map(i=>`<button class="tab ${i==S.kind?'on':''}" data-a="kind" data-v="${i}">${KINDS[i]}</button>`).join('')}</div><label>받는 사람 이름</label><input type="text" id="to" value="${S.to}" placeholder="${['이름을 입력하세요 (예: 민수)','비워 두면 산타 할아버지께','비워 두면 엄마 아빠께'][S.kind]}" maxlength="20">
+<label>느낌</label>${chips(MOODS,S.mood,'mood')}<label>전하고 싶은 메시지</label>${chips(TK[S.kind],S.topic,'topic')}<label>편지 (직접 고칠 수 있어요)</label><textarea id="lt">${S.letter}</textarea></div>
+<div class="row"><button class="b s" data-a="re">🎲 다시 쓰기</button><button class="b g" data-a="prev">카드 미리보기</button></div>`;
+if(t=='out')h=`<div class="row"><button class="b g" data-a="prev">카드 미리보기</button><button class="b" data-a="save">⬇ 4×6 사진 저장</button><button class="b" data-a="print">🖨 포토프린터 인쇄</button></div>
+<div class="row"><button class="b" data-a="slink">🔗 링크로 친구에게 보내기</button><button class="b s" data-a="simg">🖼 이미지로 공유</button></div><label>공유 링크</label><input type="text" id="lk" readonly><p class="note">링크에는 배경·캐릭터·스티커·편지가 담겨요. 얼굴 사진은 개인정보 보호를 위해 링크에 포함되지 않으니, 얼굴이 담긴 카드는 이미지로 공유해 주세요. 인쇄 용지는 4×6인치(1800×1200px)로 만들어져요.</p>`;
+p.innerHTML=h;$('#tabs').innerHTML=TABS.map(([k,n])=>`<button class="tab ${k==t?'on':''}" data-t="${k}">${n}</button>`).join('');
+if(t=='st')$('#up').onchange=e=>addImg(e.target.files[0]);
+if(t=='out')$('#lk').value=link();
+if(t=='photo'){$('#ph').onchange=e=>loadPhoto(e.target.files[0]);$('#ph2').onchange=e=>loadPhoto(e.target.files[0]);['rb','sn','ov','zm','yp'].forEach(i=>$('#'+i).oninput=buildFace);if(RAW)buildFace()}
+if(t=='let'){$('#nol').onchange=e=>{S.noL=e.target.checked?1:0;panel();pvUpd()};$('#to').oninput=e=>{S.to=e.target.value;gen();$('#lt').value=S.letter;lpUpd()};$('#fr').oninput=e=>{S.from=e.target.value;lpUpd()};$('#lt').oninput=e=>{S.letter=e.target.value;lpUpd()};lpUpd()}}
+document.addEventListener('click',e=>{const w=e.target.closest('[data-v2]');if(w){setView(w.dataset.v2);return}const t=e.target.closest('[data-t]');if(t){S.tab=t.dataset.t;panel();setView(['photo','frame','bg','st','flt'].includes(S.tab)?'edit':'prev');return}
+const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=+b.dataset.v;
+const M={tpl(){applyTpl(v);panel()},cam:openCam,pick(){$('#ph').click()},snap,camclose:closeCam,face:useFace,frm(){S.frame=v;placeFace();panel()},noface(){S.face=null;S.items=S.items.filter(i=>i.t!='f');S.tab='st';panel();setView('edit');toast('캐릭터나 스티커로 자유롭게 꾸며 보세요')},
+body(){setBody(v)},upl(){$('#up').click()},nobody(){S.items=S.items.filter(i=>i.t!='b')},bg(){S.bg=v;panel()},st(){const n=mk('s',{e:EM[v],s:1.2});S.items.push(n);S.sel=n},tx(){const n=mk('x',{txt:TXT[v],s:1.2,y:300});S.items.push(n);S.sel=n},
+flt(){S.filter=v;panel()},to(){S.to=RC[v];gen();panel()},fr(){S.from=SD[v];panel()},kind(){S.kind=v;S.topic=0;gen();panel()},mood(){S.mood=v;gen();panel()},topic(){S.topic=v;gen();panel()},re(){S.seed=S.seed.map(x=>x+1);gen();panel()},
+print,slink:shareLink,simg:shareImg,save};
+if(M[a]){M[a]();paint()}else act(a)});
+// ---- init
+const shared=loadHash();if(!shared){applyTpl(0);S.items=[mk('s',{e:'🎄',x:160,y:1040,s:1.3}),mk('s',{e:'⭐',x:760,y:150,s:1.2}),mk('s',{e:'❄️',x:150,y:150,s:1})];placeFace();S.sel=null;gen()}else $('#ban').style.display='block';
+panel();paint();
+setView('prev');Promise.all([document.fonts.load('40px Jua'),document.fonts.load('700 40px Gaegu')]).then(paint).catch(()=>{});
+</script></body></html>
