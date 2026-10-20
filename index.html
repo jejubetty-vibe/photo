@@ -2,74 +2,132 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <title>크리스마스 카드 메이커</title>
-  <meta name="description" content="크리스마스 카드 메이커 - 내 얼굴을 넣어 만드는 4×6 카드와 감성 손편지" />
+  <title>크리스마스 카드 메이커 - 내 사진과 편지로 만드는 크리스마스 포토카드</title>
+  <meta name="description" content="크리스마스 카드 메이커 - 내 사진과 편지로 만드는 크리스마스 포토카드" />
   <meta property="og:title" content="크리스마스 카드 메이커" />
-  <meta property="og:description" content="크리스마스 카드 메이커 - 내 얼굴을 넣어 만드는 4×6 카드와 감성 손편지" />
+  <meta property="og:description" content="내 사진과 편지로 만드는 크리스마스 포토카드" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&family=Gaegu:wght@400;700&family=Gowun+Batang&family=Gowun+Dodum&family=Jua&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dongle:wght@400;700&family=Gaegu:wght@400;700&family=Gowun+Batang&family=Gowun+Dodum&family=Jua&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./script.js"></script>
 </head>
-<header style="max-width:1100px;margin:auto;padding:10px 14px 4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-  <h1 style="padding:0;margin:0;font-size:22px;color:var(--red)">🎄 크리스마스 카드 메이커</h1>
-  <div style="display:flex;align-items:center;gap:8px">
-    <button type="button" class="b g" data-a="save" style="min-height:38px;padding:0 14px;font-size:14px;display:flex;align-items:center;gap:6px;box-shadow:0 3px 8px rgba(31,107,74,.25)">
-      <span>💾 4×6 사진 저장</span>
-    </button>
+<body>
+
+<!-- Header Navigation Bar -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand-zone">
+      <span class="tree-icon" aria-hidden="true">🎄</span>
+      <div class="brand-text-col">
+        <h1 class="header-title">크리스마스 카드 메이커</h1>
+        <span class="header-tagline">내 사진과 편지로 만드는 크리스마스 포토카드</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header" data-a="slink">
+        <span>🔗</span><span>링크 공유</span>
+      </button>
+      <button type="button" class="btn-header primary" data-a="save">
+        <span>💾</span><span>4×6 사진 저장</span>
+      </button>
+    </div>
   </div>
 </header>
-<div class="app">
-<div id="ban" style="grid-column:1/-1">친구가 보낸 카드예요! 내 얼굴을 넣어 답장해 보세요 🎁</div>
-<nav class="main-tabs" id="vt" aria-label="카드 만들기 단계 탭">
-  <button type="button" class="tab nav-tab on" data-v2="edit"><span class="tab-ico">✏️</span><span class="tab-txt">그림 편집</span></button>
-  <button type="button" class="tab nav-tab" data-v2="let"><span class="tab-ico">💌</span><span class="tab-txt">편지 쓰기</span></button>
-  <button type="button" class="tab nav-tab" data-v2="prev"><span class="tab-ico">🎴</span><span class="tab-txt">카드 미리보기</span></button>
-</nav>
-<div class="stage">
-<div class="cvw" id="cvw"><canvas id="cv"></canvas></div>
-<div class="tools" id="tools">
-<button class="b s" data-a="z+" aria-label="확대">＋</button><button class="b s" data-a="z-" aria-label="축소">－</button>
-<button class="b s" data-a="rot" aria-label="시계방향 회전">⟳</button><button class="b s" data-a="rot-ccw" aria-label="반시계방향 회전">⟲</button>
-<button class="b s" data-a="flip" aria-label="좌우반전">⇋</button>
-<button class="b s" data-a="del" aria-label="삭제">🗑</button>
-<button class="b g" data-a="prev">🎴 카드 미리보기</button></div>
-<div class="note" id="hint" style="text-align:center">손가락으로 끌어 옮기고, 두 손가락으로 크기·회전을 조절해요.</div>
 
-<!-- Live Letter Preview on Left Stage (편지 쓰기 탭 전용 좌측 실시간 미리보기) -->
-<div id="let-prev-stage" style="display:none">
-  <div class="cvw">
-    <canvas id="let-cv" width="900" height="1200" style="width:100%;display:block;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);background:#fff"></canvas>
+<!-- Main Workspace App -->
+<div class="app-container">
+  <div id="ban">친구가 보낸 카드예요! 내 얼굴을 넣어 답장해 보세요 🎁</div>
+
+  <!-- Left Column: Real-time Live Preview Card -->
+  <section class="preview-card-box">
+    <div class="box-header">
+      <div class="box-header-title">
+        <span class="live-dot"></span>
+        <span>실시간 카드 미리보기</span>
+      </div>
+      <span class="box-header-sub">우측에서 수정 시 즉시 반영</span>
+    </div>
+
+    <!-- Preview Canvas Display Area: Full 4x6 Postcard (Landscape 3:2 ratio) -->
+    <div class="canvas-view-stage">
+      <div class="cvw" id="cvw">
+        <canvas id="cv" width="1800" height="1200"></canvas>
+        <!-- On-object floating action toolbar (확대, 축소, 좌/우 회전, 삭제 - 아이콘 전용) -->
+        <div id="obj-floating-toolbar" class="obj-floating-toolbar" style="display:none">
+          <button type="button" data-act="zoom-in" title="크기 확대" aria-label="확대"><span>➕</span></button>
+          <button type="button" data-act="zoom-out" title="크기 축소" aria-label="축소"><span>➖</span></button>
+          <button type="button" data-act="rotate-left" title="좌측 15도 회전" aria-label="좌측 회전"><span>⟲</span></button>
+          <button type="button" data-act="rotate" title="우측 15도 회전" aria-label="우측 회전"><span>⟳</span></button>
+          <button type="button" data-act="flip" title="좌우 반전" aria-label="반전"><span>⇋</span></button>
+          <button type="button" data-act="delete" class="del-btn" title="오브젝트 삭제" aria-label="삭제"><span>🗑️</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Info Strip -->
+    <div class="preview-spec-row">
+      <span class="spec-badge-gold">4×6 (10×15cm) 인쇄 최적화 규격</span>
+      <span class="spec-badge-sub" id="mode-badge-txt">4×6 완성 엽서 실시간 편집</span>
+      <span class="spec-badge-sub">300 DPI 초고화질</span>
+    </div>
+
+    <!-- Quick Tools for selected item - hidden as requested (replaced by on-object floating controls) -->
+    <div class="tools" id="tools" style="display:none">
+      <button type="button" class="b" data-a="z+" aria-label="확대">＋ 확대</button>
+      <button type="button" class="b" data-a="z-" aria-label="축소">－ 축소</button>
+      <button type="button" class="b" data-a="rot" aria-label="시계방향 회전">⟳ 회전</button>
+      <button type="button" class="b" data-a="rot-ccw" aria-label="반시계방향 회전">⟲ 역회전</button>
+      <button type="button" class="b" data-a="flip" aria-label="좌우반전">⇋ 반전</button>
+      <button type="button" class="b" data-a="layer-up" aria-label="맨 앞으로">🔝 맨앞으로</button>
+      <button type="button" class="b" data-a="layer-down" aria-label="뒤로">⤓ 뒤로</button>
+      <button type="button" class="b del" data-a="del" aria-label="삭제">🗑 삭제</button>
+      <button type="button" class="b" data-a="reset-default-card">✨ 기본세트 복원</button>
+    </div>
+    <div class="note" id="hint">손가락이나 마우스로 요소와 스티커를 끌어서 원하는 위치에 놓을 수 있어요. 선택 시 바로 위에 확대·축소·삭제 메뉴가 나타납니다.</div>
+
+    <!-- Hidden standalone full-preview container for backward compatibility -->
+    <div id="pvw" style="display:none"></div>
+  </section>
+
+  <!-- Right Column: Editor Box -->
+  <section class="editor-card-box" id="panel-container">
+    <!-- Top 2 Main Segmented Mode Tabs: 그림 편집 vs 편지쓰기 -->
+    <div class="main-mode-tabs" id="main-mode-tabs">
+      <button type="button" class="main-mode-btn on" data-mode="edit"><span class="tab-ico">🎨</span><span>그림 편집</span></button>
+      <button type="button" class="main-mode-btn" data-mode="let"><span class="tab-ico">💌</span><span>편지쓰기</span></button>
+    </div>
+
+    <!-- Sub Navigation Tabs Bar (Icons + Labels) -->
+    <div class="sub-tabs-bar" id="tabs"></div>
+
+    <!-- Active Panel Content -->
+    <div class="panel-content-body" id="pn"></div>
+  </section>
+</div>
+
+<!-- Modal dialogs -->
+<dialog id="dlg">
+  <div id="dc"></div>
+  <div class="row" style="margin-top:14px;justify-content:flex-end;gap:8px">
+    <button type="button" class="b g" data-a="save">💾 4×6 저장</button>
+    <button type="button" class="b" data-a="close">닫기</button>
   </div>
-  <div class="note" style="text-align:center;margin-top:8px">💌 오른쪽에서 변경하는 편지 내용과 편지지 디자인이 실시간으로 반영돼요</div>
-  <div class="tools" style="justify-content:center;margin-top:8px">
-    <button type="button" class="b g" data-a="prev" style="min-height:40px;font-size:14px">🎴 완성 카드(4×6) 미리보기</button>
-    <button type="button" class="b s" data-a="goto-edit" style="min-height:40px;font-size:14px">✏️ 그림 꾸미기</button>
+</dialog>
+
+<dialog id="cdlg">
+  <video id="vid" playsinline muted autoplay></video>
+  <div class="row" style="margin-top:12px;justify-content:center;gap:10px">
+    <button type="button" class="b g" data-a="snap" style="min-height:44px;font-size:15px;padding:0 20px">📸 찰칵!</button>
+    <button type="button" class="b" data-a="camclose" style="min-height:44px;font-size:15px">취소</button>
   </div>
-</div>
+  <p class="note" style="text-align:center">얼굴이 화면 가운데에 오도록 맞춰 주세요. 밝은 곳에서 찍으면 더 예쁘게 나와요.</p>
+</dialog>
 
-<!-- 4x6 Pure Preview Container (Shows ONLY clean card & actions without design pickers!) -->
-<div id="pvw" style="display:none">
-  <div class="note" style="text-align:center;font-size:15px;margin-bottom:8px">📮 4×6 완성 크리스마스 엽서 (왼쪽: 캐릭터 카드 · 오른쪽: 손편지)</div>
-  <canvas id="pv" width="900" height="600" style="width:100%;max-width:860px;margin:auto;display:block;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.22);border:1.5px solid var(--line);background:#fff"></canvas>
-  <div class="row" style="justify-content:center;margin-top:16px;gap:8px">
-    <button class="b g" data-a="save" style="min-height:42px;font-size:15px;padding:0 18px">⬇ 4×6 사진 저장</button>
-    <button class="b s" data-a="goto-edit" style="min-height:42px;font-size:14px;padding:0 14px">✏️ 그림 다시 꾸미기</button>
-    <button class="b s" data-a="goto-let" style="min-height:42px;font-size:14px;padding:0 14px">💌 편지 수정하기</button>
-  </div>
-</div>
-</div>
-
-<div id="panel-container"><div class="tabs" id="tabs"></div><div class="panel" id="pn"></div></div>
-</div>
-
-<dialog id="dlg"><div id="dc"></div><div class="row" style="margin-top:12px"><button class="b g" data-a="save">4×6 저장</button><button class="b s" data-a="close">닫기</button></div></dialog>
-<dialog id="cdlg"><video id="vid" playsinline muted autoplay></video><div class="row" style="margin-top:10px"><button class="b g" data-a="snap">📸 찰칵!</button><button class="b s" data-a="camclose">취소</button></div><p class="note">얼굴이 화면 가운데에 오도록 맞춰 주세요. 밝은 곳, 단색 배경에서 찍으면 배경이 더 깨끗하게 지워져요.</p></dialog>
 <div id="toast"></div>
 
 </body>
