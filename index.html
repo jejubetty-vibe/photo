@@ -29,6 +29,9 @@
       </div>
     </div>
     <div class="header-actions">
+      <button type="button" class="btn-header" data-a="download-code-modal" title="오늘 완성된 전체 소스코드 다운로드">
+        <span>📦</span><span>코드 다운로드</span>
+      </button>
       <button type="button" class="btn-header" data-a="slink">
         <span>🔗</span><span>링크 공유</span>
       </button>
@@ -95,11 +98,11 @@
   </section>
 
   <!-- Right Column: Editor Box -->
-  <section class="editor-card-box" id="panel-container">
+  <section class="editor-card-box mode-let" id="panel-container">
     <!-- Top 2 Main Segmented Mode Tabs: 그림 편집 vs 편지쓰기 -->
-    <div class="main-mode-tabs" id="main-mode-tabs">
-      <button type="button" class="main-mode-btn on" data-mode="edit"><span class="tab-ico">🎨</span><span>그림 편집</span></button>
-      <button type="button" class="main-mode-btn" data-mode="let"><span class="tab-ico">💌</span><span>편지쓰기</span></button>
+    <div class="main-mode-tabs mode-let" id="main-mode-tabs">
+      <button type="button" class="main-mode-btn" data-mode="edit"><span class="tab-ico">🎨</span><span>그림 편집</span></button>
+      <button type="button" class="main-mode-btn on" data-mode="let"><span class="tab-ico">💌</span><span>편지쓰기</span></button>
     </div>
 
     <!-- Sub Navigation Tabs Bar (Icons + Labels) -->
